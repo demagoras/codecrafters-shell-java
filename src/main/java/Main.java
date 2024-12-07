@@ -24,7 +24,7 @@ public class Main {
                 if (commands.contains(splitInput)) {
                     System.out.println(splitInput + " is a shell builtin");
                 } else {
-                    System.out.println(splitInput + ": command not found");
+                    System.out.println(splitInput + ": not found");
                 }
             } else {
                 System.out.println(input + ": command not found");
