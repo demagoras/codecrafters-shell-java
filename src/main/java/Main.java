@@ -1,3 +1,4 @@
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
@@ -16,7 +17,6 @@ public class Main {
             if (input.equals("exit 0")) {
                 break;
             }
-
             if (input.startsWith("echo")) {
                 System.out.println(splitInput);
             }
@@ -24,7 +24,23 @@ public class Main {
                 if (commands.contains(splitInput)) {
                     System.out.println(splitInput + " is a shell builtin");
                 } else {
-                    System.out.println(splitInput + ": not found");
+                    boolean found = false;
+                    String pathDir = System.getenv("PATH");
+                    String[] dirs = pathDir.split(":");
+
+                    for (String dir : dirs) {
+                        File file = new File(dir, splitInput);
+
+                        if (file.exists()) {
+                            System.out.println(splitInput + " is " + file.getAbsolutePath());
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (!found) {
+                        System.out.println(splitInput + ": not found");
+                    }
                 }
             } else {
                 System.out.println(input + ": command not found");
