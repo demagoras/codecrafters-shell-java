@@ -10,7 +10,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         Scanner scanner = new Scanner(System.in);
-        List<String> commandList = Arrays.asList("echo", "exit", "type"); // List of possible commands
+        List<String> commandList = Arrays.asList("echo", "exit", "type", "pwd"); // List of possible commands
 
         while (true) {
             System.out.print("$ ");
@@ -36,6 +36,9 @@ public class Main {
                     break;
                 case "type":
                     type(commandList, splitInput);
+                    break;
+                case "pwd":
+                    System.out.println(System.getProperty("user.dir"));
                     break;
                 default:
                     executeExternalCommand(input); // Execute external programs with their own command and argument
