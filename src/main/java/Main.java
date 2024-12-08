@@ -10,7 +10,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         Scanner scanner = new Scanner(System.in);
-        List<String> commandList = Arrays.asList("echo", "exit", "type", "pwd"); // List of possible commands
+        List<String> commandList = Arrays.asList("echo", "exit", "type", "pwd", "cd"); // List of possible commands
 
         while (true) {
             System.out.print("$ ");
@@ -22,8 +22,9 @@ public class Main {
             }
 
             // Splitting command and arguments
-            String command = input.split(" ")[0];
-            String splitInput = input.length() > 5 ? input.substring(5) : "";
+            String[] parts = input.split(" ", 2);
+            String command = parts[0];
+            String arguments = parts.length > 1 ? parts[1] : "";
 
             if (input.equals("exit 0")) { // Exit with code 0
                 break;
@@ -32,13 +33,21 @@ public class Main {
             // Check for type of command
             switch (command) {
                 case "echo":
-                    System.out.println(splitInput);
+                    System.out.println(arguments);
                     break;
                 case "type":
-                    type(commandList, splitInput);
+                    type(commandList, arguments);
                     break;
                 case "pwd":
                     System.out.println(System.getProperty("user.dir"));
+                    break;
+                case "cd":
+                    File file = new File(arguments);
+                    if (file.exists() && file.isDirectory()) {
+                        System.setProperty("user.dir", file.getAbsolutePath());
+                    } else {
+                        System.out.println("cd: " + arguments + ": No such file or directory");
+                    }
                     break;
                 default:
                     executeExternalCommand(input); // Execute external programs with their own command and argument
@@ -46,26 +55,26 @@ public class Main {
         }
     }
 
-    public static void type(List<String> commandList, String splitInput) {
-        if (commandList.contains(splitInput)) {
-            System.out.println(splitInput + " is a shell builtin");
+    public static void type(List<String> commandList, String arguments) {
+        if (commandList.contains(arguments)) {
+            System.out.println(arguments + " is a shell builtin");
         } else {
             String pathDir = System.getenv("PATH");
             String[] dirs = pathDir.split(":");
             boolean found = false;
 
             for (String dir : dirs) {
-                File file = new File(dir, splitInput);
+                File file = new File(dir, arguments);
 
                 if (file.exists()) {
-                    System.out.println(splitInput + " is " + file.getAbsolutePath());
+                    System.out.println(arguments + " is " + file.getAbsolutePath());
                     found = true;
                     break;
                 }
             }
 
             if (!found) {
-                System.out.println(splitInput + ": not found");
+                System.out.println(arguments + ": not found");
             }
         }
     }
