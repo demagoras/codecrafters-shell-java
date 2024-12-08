@@ -7,43 +7,52 @@ public class Main {
     public static void main(String[] args) throws Exception {
 
         Scanner scanner = new Scanner(System.in);
-        List<String> commands = Arrays.asList("echo", "exit", "type");
+        List<String> commandList = Arrays.asList("echo", "exit", "type");
 
         while (true) {
             System.out.print("$ ");
             String input = scanner.nextLine();
-            String splitInput = input.substring(5);
+
+            String command = input.split(" ")[0];
+            String splitInput = input.length() > 5 ? input.substring(5) : "";
 
             if (input.equals("exit 0")) {
                 break;
             }
-            if (input.startsWith("echo")) {
-                System.out.println(splitInput);
+
+            switch (command) {
+                case "echo":
+                    System.out.println(splitInput);
+                    break;
+                case "type":
+                    type(commandList, splitInput);
+                    break;
+                default:
+                    System.out.println(input + ": command not found");
             }
-            else if (input.startsWith("type")) {
-                if (commands.contains(splitInput)) {
-                    System.out.println(splitInput + " is a shell builtin");
-                } else {
-                    boolean found = false;
-                    String pathDir = System.getenv("PATH");
-                    String[] dirs = pathDir.split(":");
+        }
+    }
 
-                    for (String dir : dirs) {
-                        File file = new File(dir, splitInput);
+    public static void type(List<String> commandList, String splitInput) {
+        if (commandList.contains(splitInput)) {
+            System.out.println(splitInput + " is a shell builtin");
+        } else {
+            String pathDir = System.getenv("PATH");
+            String[] dirs = pathDir.split(":");
+            boolean found = false;
 
-                        if (file.exists()) {
-                            System.out.println(splitInput + " is " + file.getAbsolutePath());
-                            found = true;
-                            break;
-                        }
-                    }
+            for (String dir : dirs) {
+                File file = new File(dir, splitInput);
 
-                    if (!found) {
-                        System.out.println(splitInput + ": not found");
-                    }
+                if (file.exists()) {
+                    System.out.println(splitInput + " is " + file.getAbsolutePath());
+                    found = true;
+                    break;
                 }
-            } else {
-                System.out.println(input + ": command not found");
+            }
+
+            if (!found) {
+                System.out.println(splitInput + ": not found");
             }
         }
     }
